@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学部分析AI｜創太先生の進路相談室</title>
+  <meta name="description" content="学部名を入力するだけで、AIが光と影の両面からリアルに分析。高校生の学部選びをサポートします。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>学部分析AI</h1>
+      <p class="subtitle">創太先生の進路相談室</p>
+      <p class="description">学部名を入力すると、AIが<strong>光と影の両面</strong>からリアルに分析します。</p>
+    </header>
+
+    <main>
+      <form id="analyzeForm">
+        <div class="input-group">
+          <input
+            type="text"
+            id="facultyInput"
+            placeholder="例：薬学部、工学部、文学部…"
+            maxlength="50"
+            required
+            autocomplete="off"
+          >
+          <button type="submit" id="submitBtn">
+            <span class="btn-text">分析する</span>
+            <span class="btn-loading" hidden>
+              <span class="spinner"></span>分析中…
+            </span>
+          </button>
+        </div>
+      </form>
+
+      <div id="result" class="result" hidden>
+        <div id="resultContent" class="result-content"></div>
+      </div>
+
+      <div id="error" class="error" hidden></div>
+    </main>
+
+    <footer>
+      <p>Powered by Claude AI｜© 創太先生の進路相談室</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
