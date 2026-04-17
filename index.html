@@ -8,7 +8,20 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
+  <!-- パスワード画面 -->
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-box">
+      <h1>AI進路相談室</h1>
+      <p>パスワードを入力してください</p>
+      <form id="authForm">
+        <input type="password" id="authInput" placeholder="パスワード" autocomplete="off" required>
+        <button type="submit">入室する</button>
+      </form>
+      <p id="authError" class="auth-error" hidden>パスワードが違います</p>
+    </div>
+  </div>
+
+  <div class="container" id="appContainer" hidden>
     <header>
       <h1>AI進路相談室</h1>
       <p class="subtitle">創太先生のオンライン塾スタディリンク</p>

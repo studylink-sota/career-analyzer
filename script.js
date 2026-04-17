@@ -1,3 +1,37 @@
+// --- Auth ---
+const AUTH_HASH = "8a8c8953e0f0f3df4b40db665704c18941f199e3acd08ca2a9bf4ae927d2c75a";
+const authForm = document.getElementById("authForm");
+const authInput = document.getElementById("authInput");
+const authError = document.getElementById("authError");
+const authScreen = document.getElementById("authScreen");
+const appContainer = document.getElementById("appContainer");
+
+async function hashPassword(pw) {
+  const data = new TextEncoder().encode(pw);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// Check if already authenticated
+if (sessionStorage.getItem("career-auth") === "1") {
+  authScreen.hidden = true;
+  appContainer.hidden = false;
+}
+
+authForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const hash = await hashPassword(authInput.value);
+  if (hash === AUTH_HASH) {
+    sessionStorage.setItem("career-auth", "1");
+    authScreen.hidden = true;
+    appContainer.hidden = false;
+  } else {
+    authError.hidden = false;
+    authInput.value = "";
+    authInput.focus();
+  }
+});
+
 // --- Tab switching ---
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => {

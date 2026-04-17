@@ -35,6 +35,74 @@ body {
   flex-direction: column;
 }
 
+/* Auth screen */
+.auth-screen {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+
+.auth-box {
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem 2rem;
+  max-width: 360px;
+  width: 100%;
+  margin: 1rem;
+}
+
+.auth-box h1 {
+  margin-bottom: 0.5rem;
+}
+
+.auth-box p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  outline: none;
+  margin-bottom: 0.75rem;
+  transition: border-color 0.2s;
+}
+
+.auth-box input:focus {
+  border-color: var(--primary);
+}
+
+.auth-box button {
+  width: 100%;
+  padding: 0.85rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.auth-box button:hover {
+  background: var(--primary-hover);
+}
+
+.auth-error {
+  color: var(--error) !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0 !important;
+}
+
 /* Header */
 header {
   text-align: center;
