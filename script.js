@@ -193,17 +193,44 @@ async function readStream(body, contentEl, containerEl) {
 
 function renderMarkdown(text) {
   let html = text;
+
+  // Tables
+  html = html.replace(/((?:^\|.+\|$\n?)+)/gm, (tableBlock) => {
+    const rows = tableBlock.trim().split("\n").filter((r) => r.trim());
+    if (rows.length < 2) return tableBlock;
+    const parseRow = (row) => row.split("|").slice(1, -1).map((c) => c.trim());
+    const isSep = (row) => /^\|[\s\-:|]+\|$/.test(row.trim());
+    let out = '<div class="table-wrap"><table>';
+    let headerDone = false;
+    for (const row of rows) {
+      if (isSep(row)) { headerDone = true; continue; }
+      const cells = parseRow(row);
+      const tag = !headerDone ? "th" : "td";
+      out += "<tr>" + cells.map((c) => `<${tag}>${c}</${tag}>`).join("") + "</tr>";
+      if (!headerDone) headerDone = true;
+    }
+    out += "</table></div>";
+    return out;
+  });
+
+  // Headers
   html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
   html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+
+  // Bold
   html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+  // Unordered lists
   html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
   html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, "<ul>$1</ul>");
+
+  // Paragraphs
   html = html
     .split("\n\n")
     .map((block) => {
       block = block.trim();
       if (!block) return "";
-      if (block.startsWith("<h") || block.startsWith("<ul") || block.startsWith("<ol")) return block;
+      if (block.startsWith("<h") || block.startsWith("<ul") || block.startsWith("<ol") || block.startsWith("<div")) return block;
       return `<p>${block}</p>`;
     })
     .join("\n");

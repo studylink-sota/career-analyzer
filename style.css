@@ -309,6 +309,34 @@ textarea {
   border-color: var(--primary);
 }
 
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+.result-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.result-content th,
+.result-content td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.result-content th {
+  background: var(--bg);
+  font-weight: 700;
+}
+
+.result-content tr:nth-child(even) td {
+  background: #f9fafb;
+}
+
 /* Error */
 .error {
   margin-top: 1rem;
