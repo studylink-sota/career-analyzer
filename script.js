@@ -14,7 +14,7 @@ async function hashPassword(pw) {
 
 // Check if already authenticated
 if (sessionStorage.getItem("career-auth") === "1") {
-  authScreen.hidden = true;
+  authScreen.style.display = "none";
   appContainer.hidden = false;
 }
 
@@ -25,7 +25,7 @@ authForm.addEventListener("submit", async (e) => {
     sessionStorage.setItem("career-auth", "1");
     authScreen.classList.add("fade-out");
     setTimeout(() => {
-      authScreen.hidden = true;
+      authScreen.style.display = "none";
       appContainer.hidden = false;
       appContainer.classList.add("fade-in");
       window.scrollTo(0, 0);
