@@ -3,47 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>学部分析AI｜創太先生の進路相談室</title>
-  <meta name="description" content="学部名を入力するだけで、AIが光と影の両面からリアルに分析。高校生の学部選びをサポートします。">
+  <title>AI進路相談室｜創太先生</title>
+  <meta name="description" content="AIが学部分析やキャリア診断であなたの進路選びをサポート。高校生向けの無料ツールです。">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>学部分析AI</h1>
-      <p class="subtitle">創太先生の進路相談室</p>
-      <p class="description">学部名を入力すると、AIが<strong>光と影の両面</strong>からリアルに分析します。</p>
+      <h1>AI進路相談室</h1>
+      <p class="subtitle">創太先生のオンライン塾スタディリンク</p>
     </header>
 
+    <nav class="tabs">
+      <button class="tab active" data-tab="faculty">学部分析</button>
+      <button class="tab" data-tab="career">キャリア診断</button>
+    </nav>
+
     <main>
-      <form id="analyzeForm">
-        <div class="input-group">
-          <input
-            type="text"
-            id="facultyInput"
-            placeholder="例：薬学部、工学部、文学部…"
-            maxlength="50"
-            required
-            autocomplete="off"
-          >
-          <button type="submit" id="submitBtn">
-            <span class="btn-text">分析する</span>
+      <!-- 学部分析タブ -->
+      <section id="tab-faculty" class="tab-content active">
+        <p class="description">学部名を入力すると、AIが<strong>光と影の両面</strong>からリアルに分析します。</p>
+        <form id="analyzeForm">
+          <div class="input-group">
+            <input
+              type="text"
+              id="facultyInput"
+              placeholder="例：薬学部、工学部、文学部…"
+              maxlength="50"
+              required
+              autocomplete="off"
+            >
+            <button type="submit" id="submitBtn">
+              <span class="btn-text">分析する</span>
+              <span class="btn-loading" hidden>
+                <span class="spinner"></span>分析中…
+              </span>
+            </button>
+          </div>
+        </form>
+        <div id="result" class="result" hidden>
+          <div id="resultContent" class="result-content"></div>
+        </div>
+        <div id="error" class="error" hidden></div>
+      </section>
+
+      <!-- キャリア診断タブ -->
+      <section id="tab-career" class="tab-content">
+        <p class="description">5つの質問に答えると、AIがあなたに合った<strong>職業と学部を5つ</strong>提案します。</p>
+        <form id="careerForm">
+          <!-- Q1 -->
+          <div class="question-card">
+            <h3>Q1. 将来、どんな生活をしたい？</h3>
+            <p class="hint">複数選択OK</p>
+            <label class="choice"><input type="checkbox" name="q1" value="ア"> 一人暮らしで安定した生活ができれば十分</label>
+            <label class="choice"><input type="checkbox" name="q1" value="イ"> 旅行や趣味も楽しみながら、余裕ある生活をしたい</label>
+            <label class="choice"><input type="checkbox" name="q1" value="ウ"> 専門スキルを磨いて、周りより高い収入を目指したい</label>
+            <label class="choice"><input type="checkbox" name="q1" value="エ"> 自分で事業をつくったり、組織のトップに立って大きく稼ぎたい</label>
+            <label class="choice"><input type="checkbox" name="q1" value="オ"> まだ具体的には分からない</label>
+            <label class="choice"><input type="checkbox" name="q1" value="カ" data-has-text="q1free"> その他</label>
+            <input type="text" class="free-input" id="q1free" placeholder="自由に記入…" hidden>
+          </div>
+
+          <!-- Q2 -->
+          <div class="question-card">
+            <h3>Q2. どんなふうに働きたい？</h3>
+            <p class="hint">複数選択OK</p>
+            <label class="choice"><input type="checkbox" name="q2" value="ア"> 新しいアイデアを考えたり、何かを表現したい</label>
+            <label class="choice"><input type="checkbox" name="q2" value="イ"> 決まった流れがある方が安心する</label>
+            <label class="choice"><input type="checkbox" name="q2" value="ウ"> 毎日違う人に会ったり、外に出る刺激がほしい</label>
+            <label class="choice"><input type="checkbox" name="q2" value="エ"> 仲の良いメンバーと協力して進めたい</label>
+            <label class="choice"><input type="checkbox" name="q2" value="オ"> 最新の流行や技術をどんどん取り入れたい</label>
+            <label class="choice"><input type="checkbox" name="q2" value="カ"> 一人の時間を大切に、作業に没頭したい</label>
+            <label class="choice"><input type="checkbox" name="q2" value="キ"> 新しいモノやコンテンツをつくってみたい</label>
+            <label class="choice"><input type="checkbox" name="q2" value="ク"> 研究活動をしたい</label>
+            <label class="choice"><input type="checkbox" name="q2" value="ケ"> 地位と名誉が欲しい</label>
+            <label class="choice"><input type="checkbox" name="q2" value="コ" data-has-text="q2free"> その他</label>
+            <input type="text" class="free-input" id="q2free" placeholder="自由に記入…" hidden>
+          </div>
+
+          <!-- Q3 -->
+          <div class="question-card">
+            <h3>Q3. 「なんとなく好き」「苦ではない」こと</h3>
+            <p class="hint">複数選択OK</p>
+            <label class="choice"><input type="checkbox" name="q3" value="ア"> ノートまとめやスケジュール管理</label>
+            <label class="choice"><input type="checkbox" name="q3" value="イ"> 面白いアイデアを出すこと</label>
+            <label class="choice"><input type="checkbox" name="q3" value="ウ"> 友達の悩み相談に乗ること</label>
+            <label class="choice"><input type="checkbox" name="q3" value="エ"> パズルやゲームの攻略を考えること</label>
+            <label class="choice"><input type="checkbox" name="q3" value="オ"> 好きなことを人に熱く語ること</label>
+            <label class="choice"><input type="checkbox" name="q3" value="カ"> みんなをまとめる役割</label>
+            <label class="choice"><input type="checkbox" name="q3" value="キ"> 地味な作業をコツコツ続けること</label>
+            <label class="choice"><input type="checkbox" name="q3" value="ク"> 知らない場所や初めての人が平気</label>
+            <label class="choice"><input type="checkbox" name="q3" value="ケ"> 困っている人を手助けすること</label>
+            <label class="choice"><input type="checkbox" name="q3" value="コ"> SNS発信、動画や絵を作ること</label>
+            <label class="choice"><input type="checkbox" name="q3" value="サ"> 友達とわいわいお喋りすること</label>
+            <label class="choice"><input type="checkbox" name="q3" value="シ"> 時間を忘れてゲームに熱中すること</label>
+            <label class="choice"><input type="checkbox" name="q3" value="ス"> 流行や新しいモノをすぐ試すこと</label>
+            <label class="choice"><input type="checkbox" name="q3" value="セ" data-has-text="q3free"> その他</label>
+            <input type="text" class="free-input" id="q3free" placeholder="自由に記入…" hidden>
+          </div>
+
+          <!-- Q4 -->
+          <div class="question-card">
+            <h3>Q4. 正直「苦手」「やりたくない」こと</h3>
+            <p class="hint">複数選択OK</p>
+            <label class="choice"><input type="checkbox" name="q4" value="ア"> 大勢の前で発表すること</label>
+            <label class="choice"><input type="checkbox" name="q4" value="イ"> 「自由にやっていいよ」と言われること</label>
+            <label class="choice"><input type="checkbox" name="q4" value="ウ"> 数学の細かい計算や理屈っぽい話</label>
+            <label class="choice"><input type="checkbox" name="q4" value="エ"> 初対面の人への話しかけ</label>
+            <label class="choice"><input type="checkbox" name="q4" value="オ"> じっとして単純作業を続けること</label>
+            <label class="choice"><input type="checkbox" name="q4" value="カ"> 順位競争や厳しいノルマ</label>
+            <label class="choice"><input type="checkbox" name="q4" value="キ"> 責任ある立場で指示を出すこと</label>
+            <label class="choice"><input type="checkbox" name="q4" value="ク"> きっちり時間を守り続けること</label>
+            <label class="choice"><input type="checkbox" name="q4" value="ケ"> 文字ばかりの難しい資料の読み込み</label>
+            <label class="choice"><input type="checkbox" name="q4" value="コ"> 上下関係が厳しい体育会系環境</label>
+            <label class="choice"><input type="checkbox" name="q4" value="サ"> 汚れる仕事や体力を激しく使う仕事</label>
+            <label class="choice"><input type="checkbox" name="q4" value="シ" data-has-text="q4free"> その他</label>
+            <input type="text" class="free-input" id="q4free" placeholder="自由に記入…" hidden>
+          </div>
+
+          <!-- Q5 -->
+          <div class="question-card">
+            <h3>Q5. 今のあなたの状況を教えてください</h3>
+            <p class="hint">例：高2文系。英語が好き。吹奏楽部。海外に興味がある。</p>
+            <textarea id="q5text" rows="3" placeholder="自由に記入してください…" required></textarea>
+          </div>
+
+          <button type="submit" id="careerSubmitBtn" class="submit-btn">
+            <span class="btn-text">診断する</span>
             <span class="btn-loading" hidden>
-              <span class="spinner"></span>分析中…
+              <span class="spinner"></span>診断中…
             </span>
           </button>
+        </form>
+
+        <div id="careerResult" class="result" hidden>
+          <div id="careerResultContent" class="result-content"></div>
         </div>
-      </form>
-
-      <div id="result" class="result" hidden>
-        <div id="resultContent" class="result-content"></div>
-      </div>
-
-      <div id="error" class="error" hidden></div>
+        <div id="careerError" class="error" hidden></div>
+      </section>
     </main>
 
     <footer>
-      <p>Powered by Claude AI｜© 創太先生の進路相談室</p>
+      <p>Powered by Claude AI｜© 創太先生のオンライン塾スタディリンク</p>
     </footer>
   </div>
 
