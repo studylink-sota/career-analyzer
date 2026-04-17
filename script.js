@@ -135,6 +135,27 @@ function disableCareerForm(disabled) {
 }
 
 // =====================
+// Clear buttons
+// =====================
+document.getElementById("clearFacultyBtn").addEventListener("click", () => {
+  input.value = "";
+  resultDiv.hidden = true;
+  resultContent.innerHTML = "";
+  hideError(errorDiv);
+  input.focus();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+document.getElementById("clearCareerBtn").addEventListener("click", () => {
+  careerForm.reset();
+  document.querySelectorAll(".free-input").forEach((el) => { el.hidden = true; el.value = ""; });
+  careerResultDiv.hidden = true;
+  careerResultContent.innerHTML = "";
+  hideError(careerErrorDiv);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+// =====================
 // Shared utilities
 // =====================
 async function readStream(body, contentEl, containerEl) {

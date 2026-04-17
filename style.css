@@ -289,6 +289,26 @@ textarea {
   color: var(--text);
 }
 
+/* Clear button */
+.clear-btn {
+  display: block;
+  margin: 1.5rem auto 0;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.clear-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
 /* Error */
 .error {
   margin-top: 1rem;
