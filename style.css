@@ -120,6 +120,21 @@ body {
   to { opacity: 0; transform: scale(0.97); }
 }
 
+/* Icon */
+.icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+}
+
+.icon-small {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.5rem;
+}
+
 /* Header */
 header {
   text-align: center;
