@@ -103,6 +103,18 @@ body {
   margin-bottom: 0 !important;
 }
 
+.fade-out {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: scale(0.97); }
+}
+
 /* Header */
 header {
   text-align: center;

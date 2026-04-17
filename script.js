@@ -23,8 +23,13 @@ authForm.addEventListener("submit", async (e) => {
   const hash = await hashPassword(authInput.value);
   if (hash === AUTH_HASH) {
     sessionStorage.setItem("career-auth", "1");
-    authScreen.hidden = true;
-    appContainer.hidden = false;
+    authScreen.classList.add("fade-out");
+    setTimeout(() => {
+      authScreen.hidden = true;
+      appContainer.hidden = false;
+      appContainer.classList.add("fade-in");
+      window.scrollTo(0, 0);
+    }, 300);
   } else {
     authError.hidden = false;
     authInput.value = "";
