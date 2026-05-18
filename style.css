@@ -389,6 +389,28 @@ textarea {
   color: var(--text);
 }
 
+/* Faculty link button (inline in career result) */
+.faculty-link {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  margin: 0.2rem 0.3rem 0.2rem 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--primary);
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.faculty-link:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
 /* Clear button */
 .clear-btn {
   display: block;

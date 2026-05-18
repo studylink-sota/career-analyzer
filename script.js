@@ -274,8 +274,34 @@ function renderMarkdown(text) {
     })
     .join("\n");
   html = html.replace(/<p>(.*?)\n(.*?)<\/p>/gs, "<p>$1<br>$2</p>");
+
+  // 学部・学科マーカー → クリック可能なボタン
+  html = html.replace(/【学部[:：]([^】]+)】/g, (_, raw) => {
+    const name = raw.trim();
+    const safeAttr = name.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const safeText = name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return `<button type="button" class="faculty-link" data-faculty="${safeAttr}">${safeText} を学部分析する →</button>`;
+  });
+
   return html;
 }
+
+// キャリア診断結果内の「学部分析する」ボタンクリック → 学部分析タブへ遷移して即実行
+careerResultContent.addEventListener("click", (e) => {
+  const btn = e.target.closest(".faculty-link");
+  if (!btn) return;
+  const faculty = btn.dataset.faculty;
+  if (!faculty) return;
+
+  document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach((c) => c.classList.remove("active"));
+  document.querySelector('[data-tab="faculty"]').classList.add("active");
+  document.getElementById("tab-faculty").classList.add("active");
+
+  input.value = faculty.slice(0, 50);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  form.requestSubmit();
+});
 
 function setLoading(btn, loading) {
   btn.disabled = loading;
