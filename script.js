@@ -247,6 +247,36 @@ document.getElementById("clearJobBtn").addEventListener("click", () => {
 });
 
 // =====================
+// Copy buttons (各結果の上下に配置)
+// =====================
+document.querySelectorAll(".copy-btn").forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const container = btn.closest(".result");
+    const content = container?.querySelector(".result-content");
+    if (!content) return;
+    const text = (content.innerText || content.textContent || "").trim();
+    if (!text) return;
+
+    const original = btn.dataset.original || btn.textContent;
+    btn.dataset.original = original;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.textContent = "コピーしました";
+      btn.classList.add("copied");
+    } catch {
+      btn.textContent = "コピー失敗";
+      btn.classList.add("copy-failed");
+    }
+
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove("copied", "copy-failed");
+    }, 1500);
+  });
+});
+
+// =====================
 // Shared utilities
 // =====================
 async function readStream(body, contentEl, containerEl) {

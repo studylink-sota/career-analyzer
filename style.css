@@ -416,6 +416,43 @@ textarea {
   color: #fff;
 }
 
+/* Copy button (上下に配置) */
+.copy-btn {
+  display: block;
+  margin: 0 auto 1rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--primary);
+  background: var(--surface);
+  border: 1.5px solid var(--primary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.copy-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.copy-btn.copied {
+  background: #10b981;
+  border-color: #10b981;
+  color: #fff;
+}
+
+.copy-btn.copy-failed {
+  background: var(--error);
+  border-color: var(--error);
+  color: #fff;
+}
+
+.result-content + .copy-btn {
+  margin-top: 1.5rem;
+}
+
 /* Clear button */
 .clear-btn {
   display: block;
