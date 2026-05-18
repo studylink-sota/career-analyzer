@@ -92,6 +92,7 @@ form.addEventListener("submit", async (e) => {
     resultDiv.hidden = false;
     await readStream(response.body, resultContent, resultDiv);
   } catch (err) {
+    if (!resultContent.innerHTML.trim()) resultDiv.hidden = true;
     showError(errorDiv, err.message);
   } finally {
     setLoading(submitBtn, false);
@@ -135,6 +136,7 @@ careerForm.addEventListener("submit", async (e) => {
     careerResultDiv.hidden = false;
     await readStream(response.body, careerResultContent, careerResultDiv);
   } catch (err) {
+    if (!careerResultContent.innerHTML.trim()) careerResultDiv.hidden = true;
     showError(careerErrorDiv, err.message);
   } finally {
     setLoading(careerSubmitBtn, false);
@@ -209,6 +211,7 @@ jobForm.addEventListener("submit", async (e) => {
     jobResultDiv.hidden = false;
     await readStream(response.body, jobResultContent, jobResultDiv);
   } catch (err) {
+    if (!jobResultContent.innerHTML.trim()) jobResultDiv.hidden = true;
     showError(jobErrorDiv, err.message);
   } finally {
     setLoading(jobSubmitBtn, false);
@@ -298,17 +301,29 @@ async function readStream(body, contentEl, containerEl) {
       const data = line.slice(6);
       if (data === "[DONE]") break;
 
+      let event;
       try {
-        const event = JSON.parse(data);
-        if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
-          markdown += event.delta.text;
-          contentEl.innerHTML = renderMarkdown(markdown);
-          containerEl.scrollIntoView({ behavior: "smooth", block: "end" });
-        }
+        event = JSON.parse(data);
       } catch {
-        // skip
+        continue; // 不正なJSONはスキップ
+      }
+
+      if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
+        markdown += event.delta.text;
+        contentEl.innerHTML = renderMarkdown(markdown);
+        containerEl.scrollIntoView({ behavior: "smooth", block: "end" });
+      } else if (event.type === "error") {
+        const code = event.error?.type || "";
+        if (code === "overloaded_error") {
+          throw new Error("AIサーバーが混雑しています。30秒ほど待ってからもう一度お試しください。");
+        }
+        throw new Error(event.error?.message || "AIサーバーでエラーが発生しました。時間を置いて再度お試しください。");
       }
     }
+  }
+
+  if (!markdown.trim()) {
+    throw new Error("AIから応答が得られませんでした。時間を置いて再度お試しください。");
   }
 }
 
