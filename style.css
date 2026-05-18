@@ -210,7 +210,8 @@ h1 {
   gap: 0.5rem;
 }
 
-#facultyInput {
+#facultyInput,
+#jobInput {
   flex: 1;
   padding: 0.85rem 1rem;
   font-size: 1rem;
@@ -221,11 +222,13 @@ h1 {
   background: var(--surface);
 }
 
-#facultyInput:focus {
+#facultyInput:focus,
+#jobInput:focus {
   border-color: var(--primary);
 }
 
 #submitBtn,
+#jobSubmitBtn,
 .submit-btn {
   padding: 0.85rem 1.5rem;
   font-size: 1rem;
@@ -240,11 +243,13 @@ h1 {
 }
 
 #submitBtn:hover,
+#jobSubmitBtn:hover,
 .submit-btn:hover {
   background: var(--primary-hover);
 }
 
 #submitBtn:disabled,
+#jobSubmitBtn:disabled,
 .submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -389,13 +394,13 @@ textarea {
   color: var(--text);
 }
 
-/* Faculty link button (inline in career result) */
-.faculty-link {
+/* Job deep-dive link button (inline in career result) */
+.job-link {
   display: inline-block;
-  padding: 0.35rem 0.75rem;
-  margin: 0.2rem 0.3rem 0.2rem 0;
-  font-size: 0.88rem;
-  font-weight: 600;
+  padding: 0.4rem 0.85rem;
+  margin: 0.25rem 0.3rem 0.25rem 0;
+  font-size: 0.9rem;
+  font-weight: 700;
   font-family: inherit;
   color: var(--primary);
   background: #eff6ff;
@@ -405,7 +410,7 @@ textarea {
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
-.faculty-link:hover {
+.job-link:hover {
   background: var(--primary);
   border-color: var(--primary);
   color: #fff;
@@ -493,8 +498,19 @@ footer {
     flex-direction: column;
   }
 
-  #submitBtn {
+  #submitBtn,
+  #jobSubmitBtn {
     width: 100%;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    flex: 1 0 33%;
+    font-size: 0.9rem;
+    padding: 0.6rem 0.5rem;
   }
 
   .result {

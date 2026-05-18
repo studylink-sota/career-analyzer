@@ -32,6 +32,7 @@
     <nav class="tabs">
       <button class="tab active" data-tab="faculty">学部分析</button>
       <button class="tab" data-tab="career">キャリア診断</button>
+      <button class="tab" data-tab="job">職業分析</button>
     </nav>
 
     <main>
@@ -157,6 +158,34 @@
           <button type="button" id="clearCareerBtn" class="clear-btn">クリアして最初から</button>
         </div>
         <div id="careerError" class="error" hidden></div>
+      </section>
+
+      <!-- 職業分析タブ -->
+      <section id="tab-job" class="tab-content">
+        <p class="description">職業名を入力すると、AIが業界の<strong>リアルな実態</strong>を光と影の両面から深掘りします。</p>
+        <form id="jobForm">
+          <div class="input-group">
+            <input
+              type="text"
+              id="jobInput"
+              placeholder="例：弁護士、プロダクトマネージャー、薬剤師…"
+              maxlength="60"
+              required
+              autocomplete="off"
+            >
+            <button type="submit" id="jobSubmitBtn">
+              <span class="btn-text">分析する</span>
+              <span class="btn-loading" hidden>
+                <span class="spinner"></span>分析中…
+              </span>
+            </button>
+          </div>
+        </form>
+        <div id="jobResult" class="result" hidden>
+          <div id="jobResultContent" class="result-content"></div>
+          <button type="button" id="clearJobBtn" class="clear-btn">クリアして最初から</button>
+        </div>
+        <div id="jobError" class="error" hidden></div>
       </section>
     </main>
 

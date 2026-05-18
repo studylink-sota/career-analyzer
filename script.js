@@ -174,6 +174,49 @@ function disableCareerForm(disabled) {
 }
 
 // =====================
+// 職業分析
+// =====================
+const jobForm = document.getElementById("jobForm");
+const jobInput = document.getElementById("jobInput");
+const jobSubmitBtn = document.getElementById("jobSubmitBtn");
+const jobResultDiv = document.getElementById("jobResult");
+const jobResultContent = document.getElementById("jobResultContent");
+const jobErrorDiv = document.getElementById("jobError");
+
+jobForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const job = jobInput.value.trim();
+  if (!job) return;
+
+  setLoading(jobSubmitBtn, true);
+  jobInput.disabled = true;
+  hideError(jobErrorDiv);
+  jobResultDiv.hidden = true;
+  jobResultContent.innerHTML = "";
+
+  try {
+    const response = await fetch("/api/job", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ job }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.error || "エラーが発生しました");
+    }
+
+    jobResultDiv.hidden = false;
+    await readStream(response.body, jobResultContent, jobResultDiv);
+  } catch (err) {
+    showError(jobErrorDiv, err.message);
+  } finally {
+    setLoading(jobSubmitBtn, false);
+    jobInput.disabled = false;
+  }
+});
+
+// =====================
 // Clear buttons
 // =====================
 document.getElementById("clearFacultyBtn").addEventListener("click", () => {
@@ -191,6 +234,15 @@ document.getElementById("clearCareerBtn").addEventListener("click", () => {
   careerResultDiv.hidden = true;
   careerResultContent.innerHTML = "";
   hideError(careerErrorDiv);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+document.getElementById("clearJobBtn").addEventListener("click", () => {
+  jobInput.value = "";
+  jobResultDiv.hidden = true;
+  jobResultContent.innerHTML = "";
+  hideError(jobErrorDiv);
+  jobInput.focus();
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
@@ -275,32 +327,32 @@ function renderMarkdown(text) {
     .join("\n");
   html = html.replace(/<p>(.*?)\n(.*?)<\/p>/gs, "<p>$1<br>$2</p>");
 
-  // 学部・学科マーカー → クリック可能なボタン
-  html = html.replace(/【学部[:：]([^】]+)】/g, (_, raw) => {
+  // 職業名マーカー → クリック可能なボタン
+  html = html.replace(/【職業[:：]([^】]+)】/g, (_, raw) => {
     const name = raw.trim();
     const safeAttr = name.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     const safeText = name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    return `<button type="button" class="faculty-link" data-faculty="${safeAttr}">${safeText} を学部分析する →</button>`;
+    return `<button type="button" class="job-link" data-job="${safeAttr}">${safeText} を深掘り分析する →</button>`;
   });
 
   return html;
 }
 
-// キャリア診断結果内の「学部分析する」ボタンクリック → 学部分析タブへ遷移して即実行
+// キャリア診断結果内の「職業分析する」ボタンクリック → 職業分析タブへ遷移して即実行
 careerResultContent.addEventListener("click", (e) => {
-  const btn = e.target.closest(".faculty-link");
+  const btn = e.target.closest(".job-link");
   if (!btn) return;
-  const faculty = btn.dataset.faculty;
-  if (!faculty) return;
+  const job = btn.dataset.job;
+  if (!job) return;
 
   document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
   document.querySelectorAll(".tab-content").forEach((c) => c.classList.remove("active"));
-  document.querySelector('[data-tab="faculty"]').classList.add("active");
-  document.getElementById("tab-faculty").classList.add("active");
+  document.querySelector('[data-tab="job"]').classList.add("active");
+  document.getElementById("tab-job").classList.add("active");
 
-  input.value = faculty.slice(0, 50);
+  jobInput.value = job.slice(0, 60);
   window.scrollTo({ top: 0, behavior: "smooth" });
-  form.requestSubmit();
+  jobForm.requestSubmit();
 });
 
 function setLoading(btn, loading) {
