@@ -1,41 +1,20 @@
-// --- Auth ---
-const AUTH_HASH = "8a8c8953e0f0f3df4b40db665704c18941f199e3acd08ca2a9bf4ae927d2c75a";
-const authForm = document.getElementById("authForm");
-const authInput = document.getElementById("authInput");
-const authError = document.getElementById("authError");
+// --- Auth (URLトークン方式) ---
+// LINEリッチメニュー等に登録した「?k=<トークン>」付きURLから開くと利用できる。
+// トークンはsessionStorageに保存し、アドレスバーからは即座に消す。
 const authScreen = document.getElementById("authScreen");
 const appContainer = document.getElementById("appContainer");
 
-async function hashPassword(pw) {
-  const data = new TextEncoder().encode(pw);
-  const buf = await crypto.subtle.digest("SHA-256", data);
-  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+const urlToken = new URLSearchParams(location.search).get("k");
+if (urlToken) {
+  sessionStorage.setItem("career-token", urlToken);
+  history.replaceState(null, "", location.pathname);
 }
+const ACCESS_TOKEN = sessionStorage.getItem("career-token") || "";
 
-// Check if already authenticated
-if (sessionStorage.getItem("career-auth") === "1") {
+if (ACCESS_TOKEN) {
   authScreen.style.display = "none";
   appContainer.hidden = false;
 }
-
-authForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const hash = await hashPassword(authInput.value);
-  if (hash === AUTH_HASH) {
-    sessionStorage.setItem("career-auth", "1");
-    authScreen.classList.add("fade-out");
-    setTimeout(() => {
-      authScreen.style.display = "none";
-      appContainer.hidden = false;
-      appContainer.classList.add("fade-in");
-      window.scrollTo(0, 0);
-    }, 300);
-  } else {
-    authError.hidden = false;
-    authInput.value = "";
-    authInput.focus();
-  }
-});
 
 // --- Tab switching ---
 document.querySelectorAll(".tab").forEach((tab) => {
@@ -80,7 +59,7 @@ form.addEventListener("submit", async (e) => {
   try {
     const response = await fetch("/api/analyze", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-Access-Token": ACCESS_TOKEN },
       body: JSON.stringify({ faculty }),
     });
 
@@ -124,7 +103,7 @@ careerForm.addEventListener("submit", async (e) => {
   try {
     const response = await fetch("/api/career", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-Access-Token": ACCESS_TOKEN },
       body: JSON.stringify({ answers }),
     });
 
@@ -199,7 +178,7 @@ jobForm.addEventListener("submit", async (e) => {
   try {
     const response = await fetch("/api/job", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-Access-Token": ACCESS_TOKEN },
       body: JSON.stringify({ job }),
     });
 

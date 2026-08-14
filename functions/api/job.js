@@ -1,11 +1,16 @@
+import { streamAI, checkAccess } from "./_llm.js";
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, X-Access-Token",
   };
+
+  const denied = checkAccess(request, env, corsHeaders);
+  if (denied) return denied;
 
   try {
     const { job } = await request.json();
@@ -28,7 +33,7 @@ export async function onRequestPost(context) {
 
 【重要なルール】
 - 表（テーブル）は使わず、見出しと箇条書きと短い文章で書くこと
-- 全体で2500文字程度にまとめること
+- 全体で1500文字程度にまとめること
 - きれいごとで終わらせず、業界の本音や厳しい現実も具体的に書くこと
 - 数字（年収、労働時間、合格率など）はできるだけ具体的に出すこと`;
 
@@ -60,38 +65,12 @@ AIや自動化でこの職業がどう変わるか。代替されるリスクと
 
 見出しを使い、箇条書き中心で読みやすく整理してください。`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 8192,
-        stream: true,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userPrompt }],
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Claude API error:", response.status, errorText);
-      return new Response(JSON.stringify({ error: "AI分析中にエラーが発生しました。しばらくしてからお試しください。" }), {
-        status: 502,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-
-    return new Response(response.body, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-        ...corsHeaders,
-      },
+    return await streamAI({
+      env,
+      system: systemPrompt,
+      prompt: userPrompt,
+      errorMessage: "AI分析中にエラーが発生しました。しばらくしてからお試しください。",
+      corsHeaders,
     });
   } catch (err) {
     console.error("Worker error:", err);
@@ -107,7 +86,7 @@ export async function onRequestOptions() {
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type, X-Access-Token",
     },
   });
 }

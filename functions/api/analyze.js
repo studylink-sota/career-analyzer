@@ -1,11 +1,16 @@
+import { streamAI, checkAccess } from "./_llm.js";
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, X-Access-Token",
   };
+
+  const denied = checkAccess(request, env, corsHeaders);
+  if (denied) return denied;
 
   try {
     const { faculty } = await request.json();
@@ -28,8 +33,8 @@ export async function onRequestPost(context) {
 
 【重要なルール】
 - 表（テーブル）は使わず、箇条書きと短い文章で書くこと
-- 各セクションは5〜10行程度でしっかり書くこと
-- 全体で2500文字程度にまとめること`;
+- 各セクションは4〜7行程度で簡潔に書くこと
+- 全体で1500文字程度にまとめること`;
 
     const userPrompt = `「${faculty.trim()}」について、以下の4つの観点から分析してください。
 
@@ -47,38 +52,12 @@ AIや社会変化でこの分野がどう変わるか、需要の増減、10年�
 
 箇条書き中心で、読みやすく整理してください。`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 8192,
-        stream: true,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userPrompt }],
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Claude API error:", response.status, errorText);
-      return new Response(JSON.stringify({ error: "AI分析中にエラーが発生しました。しばらくしてからお試しください。" }), {
-        status: 502,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-
-    return new Response(response.body, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-        ...corsHeaders,
-      },
+    return await streamAI({
+      env,
+      system: systemPrompt,
+      prompt: userPrompt,
+      errorMessage: "AI分析中にエラーが発生しました。しばらくしてからお試しください。",
+      corsHeaders,
     });
   } catch (err) {
     console.error("Worker error:", err);
@@ -94,7 +73,7 @@ export async function onRequestOptions() {
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type, X-Access-Token",
     },
   });
 }
