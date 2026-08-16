@@ -61,7 +61,7 @@ export async function streamAI({ env, system, prompt, errorMessage, corsHeaders 
       body: JSON.stringify({
         system_instruction: { parts: [{ text: system }] },
         contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 4096 },
+        generationConfig: { maxOutputTokens: 8192 },
       }),
     });
 
@@ -87,7 +87,7 @@ export async function streamAI({ env, system, prompt, errorMessage, corsHeaders 
       },
       body: JSON.stringify({
         model: CLAUDE_MODEL,
-        max_tokens: 4096,
+        max_tokens: 8192,
         stream: true,
         system,
         messages: [{ role: "user", content: prompt }],
