@@ -26,6 +26,9 @@ function resolveProvider(env) {
 // クライアントは X-Access-Token ヘッダーでトークンを送り、env.ACCESS_TOKEN と照合する。
 // 不一致（または ACCESS_TOKEN 未設定）なら 401 Response を返し、通過なら null を返す。
 export function checkAccess(request, env, corsHeaders) {
+  // AUTH_DISABLED=true の間は認証を一時解除（LINEリッチメニュー整備までの暫定運用）
+  if (env.AUTH_DISABLED === "true") return null;
+
   const token = request.headers.get("X-Access-Token") || "";
   if (!env.ACCESS_TOKEN || token !== env.ACCESS_TOKEN) {
     return new Response(

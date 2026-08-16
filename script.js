@@ -11,10 +11,10 @@ if (urlToken) {
 }
 const ACCESS_TOKEN = sessionStorage.getItem("career-token") || "";
 
-if (ACCESS_TOKEN) {
-  authScreen.style.display = "none";
-  appContainer.hidden = false;
-}
+// 【一時解除中】リッチメニュー整備までゲートを開放（サーバー側もAUTH_DISABLED=trueで開放中）。
+// 戻すときはこのブロックを `if (ACCESS_TOKEN) { ... }` に戻し、AUTH_DISABLEDを削除する。
+authScreen.style.display = "none";
+appContainer.hidden = false;
 
 // --- Tab switching ---
 document.querySelectorAll(".tab").forEach((tab) => {
