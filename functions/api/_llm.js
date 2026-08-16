@@ -1,12 +1,25 @@
-// LLM呼び出しの共通ヘルパー。使用モデルの優先順位:
-//   1. GEMINI_API_KEY があれば Gemini 2.5 Flash-Lite（無料枠あり・最安）
-//   2. ANTHROPIC_API_KEY があれば Claude（最高品質）
-//   3. どちらもなければ Cloudflare Workers AI（要AIバインディング）
+// LLM呼び出しの共通ヘルパー。
+// 使用プロバイダーは resolveProvider() が決定する（強制フラグ > キーの有無による自動選択）。
 // いずれの場合もクライアントには Anthropic 形式の SSE（content_block_delta）を返す。
 
 const CLAUDE_MODEL = "claude-haiku-4-5-20251001";
 const GEMINI_MODEL = "gemini-2.5-flash-lite";
 const DEFAULT_WORKERS_AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
+
+// 使用プロバイダーの決定。強制フラグを最優先し、なければキーの有無で自動選択する。
+//   強制: USE_CLAUDE=true → Claude（両フラグがtrueならこちらが優先）
+//         USE_WORKERS_AI=true → Workers AI（Geminiキーがあっても強制）
+//   自動: Gemini > Claude > Workers AI
+function resolveProvider(env) {
+  if (env.USE_CLAUDE === "true") {
+    if (env.ANTHROPIC_API_KEY) return "claude";
+    console.error("USE_CLAUDE=true ですが ANTHROPIC_API_KEY が未設定のため自動選択にフォールバックします");
+  }
+  if (env.USE_WORKERS_AI === "true") return "workers_ai";
+  if (env.GEMINI_API_KEY) return "gemini";
+  if (env.ANTHROPIC_API_KEY) return "claude";
+  return "workers_ai";
+}
 
 // URLトークン方式のアクセス検証。
 // クライアントは X-Access-Token ヘッダーでトークンを送り、env.ACCESS_TOKEN と照合する。
@@ -30,8 +43,9 @@ export async function streamAI({ env, system, prompt, errorMessage, corsHeaders 
     ...corsHeaders,
   };
 
-  // 1. Gemini（GEMINI_API_KEY設定時。USE_CLAUDE=true でClaude優先に戻せる）
-  if (env.GEMINI_API_KEY && env.USE_CLAUDE !== "true") {
+  const provider = resolveProvider(env);
+
+  if (provider === "gemini") {
     const geminiUrl =
       `https://generativelanguage.googleapis.com/v1beta/models/${env.GEMINI_MODEL || GEMINI_MODEL}:streamGenerateContent?alt=sse`;
     const response = await fetch(geminiUrl, {
@@ -59,9 +73,7 @@ export async function streamAI({ env, system, prompt, errorMessage, corsHeaders 
     return new Response(geminiToAnthropicSSE(response.body), { headers: sseHeaders });
   }
 
-  const useWorkersAI = env.USE_WORKERS_AI === "true" || !env.ANTHROPIC_API_KEY;
-
-  if (!useWorkersAI) {
+  if (provider === "claude") {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
