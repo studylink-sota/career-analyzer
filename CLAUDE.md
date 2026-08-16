@@ -19,9 +19,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### データフロー
 
 1. フロントエンドからAPIにPOSTリクエスト
-2. Cloudflare Functionsが `functions/api/_llm.js` の `streamAI()` 経由でLLMをストリーミング呼び出し
-   - `ANTHROPIC_API_KEY` が設定されていれば Claude API（`claude-haiku-4-5-20251001`）
-   - 未設定（または `USE_WORKERS_AI=true`）なら Cloudflare Workers AI（既定: `@cf/meta/llama-3.3-70b-instruct-fp8-fast`、`WORKERS_AI_MODEL` で変更可）。Workers AIのストリームはサーバー側でAnthropic形式SSEに変換される
+2. Cloudflare Functionsが `functions/api/_llm.js` の `streamAI()` 経由でLLMをストリーミング呼び出し。優先順位:
+   1. `GEMINI_API_KEY` があれば Gemini 2.5 Flash-Lite（`USE_CLAUDE=true` でスキップ可、`GEMINI_MODEL` でモデル変更可）
+   2. `ANTHROPIC_API_KEY` があれば Claude API（`claude-haiku-4-5-20251001`）
+   3. どちらもなければ Cloudflare Workers AI（既定: `@cf/meta/llama-3.3-70b-instruct-fp8-fast`、`WORKERS_AI_MODEL` で変更可）
+   - Gemini / Workers AI のストリームはサーバー側でAnthropic形式SSEに変換される（クライアントは常にAnthropic形式だけ解釈）
 3. SSE（Server-Sent Events）形式でレスポンスをクライアントに中継
 4. `script.js` の `readStream()` がSSEをパースし、`renderMarkdown()` でHTMLに変換してリアルタイム表示
 
@@ -38,7 +40,9 @@ LINEリッチメニュー等に登録した `https://<サイト>/?k=<トーク�
 ### 環境変数
 
 - `ACCESS_TOKEN`（必須）— URLトークン認証の照合値。未設定だとAPIは全拒否
-- `ANTHROPIC_API_KEY`（任意）— 設定されていればClaude APIを使用
+- `GEMINI_API_KEY`（任意）— 設定されていればGeminiを最優先で使用
+- `USE_CLAUDE`（任意）— `"true"` でGeminiキーがあってもClaudeを使用
+- `ANTHROPIC_API_KEY`（任意）— 設定されていればClaude APIを使用（Gemini未設定時）
 - `USE_WORKERS_AI`（任意）— `"true"` でキーがあってもWorkers AIを強制使用
 - `WORKERS_AI_MODEL`（任意）— Workers AIのモデルIDを上書き
 
