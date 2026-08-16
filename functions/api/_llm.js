@@ -3,7 +3,8 @@
 // いずれの場合もクライアントには Anthropic 形式の SSE（content_block_delta）を返す。
 
 const CLAUDE_MODEL = "claude-haiku-4-5-20251001";
-const GEMINI_MODEL = "gemini-2.5-flash-lite";
+// 2.5-flash-liteは新規ユーザー提供終了（404）のため3.5系を使用
+const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const DEFAULT_WORKERS_AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 // 使用プロバイダーの決定。強制フラグを最優先し、なければキーの有無で自動選択する。

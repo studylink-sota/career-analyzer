@@ -21,7 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 1. フロントエンドからAPIにPOSTリクエスト
 2. Cloudflare Functionsが `functions/api/_llm.js` の `streamAI()` 経由でLLMをストリーミング呼び出し。プロバイダーは `resolveProvider()` が決定:
    - 強制フラグ最優先: `USE_CLAUDE=true` → Claude（両フラグtrueならこちらが優先。キー未設定なら警告して自動選択へ）、`USE_WORKERS_AI=true` → Workers AI
-   - 自動選択: `GEMINI_API_KEY` があれば Gemini 2.5 Flash-Lite（`GEMINI_MODEL` で変更可）→ `ANTHROPIC_API_KEY` があれば Claude（`claude-haiku-4-5-20251001`）→ どちらもなければ Workers AI（既定: `@cf/meta/llama-3.3-70b-instruct-fp8-fast`、`WORKERS_AI_MODEL` で変更可）
+   - 自動選択: `GEMINI_API_KEY` があれば Gemini 3.5 Flash-Lite（`GEMINI_MODEL` で変更可）→ `ANTHROPIC_API_KEY` があれば Claude（`claude-haiku-4-5-20251001`）→ どちらもなければ Workers AI（既定: `@cf/meta/llama-3.3-70b-instruct-fp8-fast`、`WORKERS_AI_MODEL` で変更可）
    - Gemini / Workers AI のストリームはサーバー側でAnthropic形式SSEに変換される（クライアントは常にAnthropic形式だけ解釈）
 3. SSE（Server-Sent Events）形式でレスポンスをクライアントに中継
 4. `script.js` の `readStream()` がSSEをパースし、`renderMarkdown()` でHTMLに変換してリアルタイム表示
