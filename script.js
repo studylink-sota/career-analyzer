@@ -267,6 +267,9 @@ async function readStream(body, contentEl, containerEl) {
   let markdown = "";
   let buffer = "";
 
+  // 生成開始時に回答の先頭へ1回だけスクロール（以降の自動スクロールはしない）
+  containerEl.scrollIntoView({ behavior: "smooth", block: "start" });
+
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
@@ -290,7 +293,6 @@ async function readStream(body, contentEl, containerEl) {
       if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
         markdown += event.delta.text;
         contentEl.innerHTML = renderMarkdown(markdown);
-        containerEl.scrollIntoView({ behavior: "smooth", block: "end" });
       } else if (event.type === "error") {
         const code = event.error?.type || "";
         if (code === "overloaded_error") {
