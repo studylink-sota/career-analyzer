@@ -154,6 +154,17 @@ h1 {
   margin-top: 0.25rem;
 }
 
+.subtitle a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.header-disclaimer {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
 .description {
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
